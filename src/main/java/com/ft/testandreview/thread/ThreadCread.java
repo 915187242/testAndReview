@@ -80,5 +80,53 @@ public class ThreadCread {
         System.out.println("方式三结果直接通过FutureTask对象取出"+futureTask.get());
         executor.shutdown();
 
+        // FutureTask的run()代码块只执行一次，能够在高并发环境下确保任务只执行一次。
+        /*
+
+        执行结果(全局变量), 有2种情况:
+        1. 顺利完成返回的结果
+        2. 执行run()代码块过程中抛出的异常
+
+        private Object outcome;
+
+        //正在执行run()的线程, 内存可被其他线程可见
+        private volatile Thread runner;
+
+        public void run() {
+            /*
+            //FutureTask的run()仅执行一次的原因：
+            //1. state != NEW表示任务正在被执行或已经完成, 直接return
+            //2. 若state==NEW, 则尝试CAS将当前线程 设置为执行run()的线程,如果失败,说明已经有其他线程 先行一步执行了run(),则当前线程return退出
+            if (state != NEW ||!UNSAFE.compareAndSwapObject(this, runnerOffset,null, Thread.currentThread()))
+                return;
+            try {
+                //持有Callable的实例,后续会执行该实例的call()方法
+                Callable<V> c = callable;
+                if (c != null && state == NEW) {
+                    V result;
+                    boolean ran;
+                    try {
+                        result = c.call();
+                        ran = true;
+                    }catch (Throwable ex) {
+                        result = null;
+                        ran = false;
+                        //执行中抛的异常会放入outcome中保存
+                        setException(ex);
+                    }
+                    if (ran)
+                        //若无异常, 顺利完成的执行结果会放入outcome保存
+                        set(result);
+                }
+            }finally {
+                // help GC
+                runner = null;
+                int s = state;
+                if (s >= INTERRUPTING)
+                    handlePossibleCancellationInterrupt(s);
+            }
+        }
+         */
+
     }
 }
