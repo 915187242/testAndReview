@@ -73,6 +73,11 @@ public class ThreadCread {
         果为了可取消性而使用 Future 但又不提供可用的结果，则可以声明 Future<?> 形
         式类型、并返回 null 作为底层任务的结果。
          */
+        // OR
+        // 方式三 通过FutureTask实现
+        FutureTask<Integer> futureTask = new FutureTask<>(new Task());
+        executor.submit(futureTask);
+        System.out.println("方式三结果直接通过FutureTask对象取出"+futureTask.get());
         executor.shutdown();
 
     }
